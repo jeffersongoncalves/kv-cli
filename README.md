@@ -18,7 +18,7 @@ Sibling of [db-cli](https://github.com/jeffersongoncalves/db-cli), built with
 [Laravel Zero](https://laravel-zero.com).
 
 <p align="center">
-  <a href="https://github.com/jeffersongoncalves/kv-cli/actions"><img src="https://github.com/jeffersongoncalves/kv-cli/actions/workflows/run-tests.yml/badge.svg" alt="Tests" /></a>
+  <a href="https://github.com/jeffersongoncalves/kv-cli/actions"><img src="https://github.com/jeffersongoncalves/kv-cli/actions/workflows/tests.yml/badge.svg" alt="Tests" /></a>
   <a href="https://packagist.org/packages/jeffersongoncalves/kv-cli"><img src="https://img.shields.io/packagist/dt/jeffersongoncalves/kv-cli" alt="Total Downloads" /></a>
   <a href="https://github.com/jeffersongoncalves/kv-cli/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jeffersongoncalves/kv-cli" alt="License" /></a>
   <img src="https://img.shields.io/badge/php-%3E%3D8.3-8892BF" alt="PHP 8.3+" />

@@ -21,9 +21,9 @@ kv get cache mykey                # RIGHT
 Profiles live in `~/.kv-cli/config.json` (mode `0600`), keyed by name.
 
 ```bash
-# Non-interactive add (pass every flag, including --db, or a prompt fires)
-kv connections:add NAME --host=127.0.0.1 --port=6379 --db=0 --password=PASS --no-interaction
-kv connections:add NAME --host=HOST --port=6380 --db=0 --username=ACLUSER --password=PASS --tls --no-interaction
+# Non-interactive add (pass every flag or a prompt fires; --db is optional, defaults to 0)
+kv connections:add NAME --host=127.0.0.1 --port=6379 --password=PASS --no-interaction
+kv connections:add NAME --host=HOST --port=6380 --db=2 --username=ACLUSER --password=PASS --tls --no-interaction
 
 kv connections:list
 kv connections:remove NAME --force
@@ -63,7 +63,7 @@ connection/auth error).
 ## Example: end-to-end from a fresh agent
 
 ```bash
-kv connections:add prod --host=10.0.0.5 --port=6379 --db=0 --password="$REDIS_PASSWORD" --no-interaction
+kv connections:add prod --host=10.0.0.5 --port=6379 --password="$REDIS_PASSWORD" --no-interaction
 kv info prod keyspace --format=json
 kv keys prod "laravel_cache:*" --limit=20 --format=json
 kv get prod laravel_cache:settings --format=json
