@@ -21,12 +21,12 @@ Sibling of [db-cli](https://github.com/jeffersongoncalves/db-cli), built with
   <a href="https://github.com/jeffersongoncalves/kv-cli/actions"><img src="https://github.com/jeffersongoncalves/kv-cli/actions/workflows/run-tests.yml/badge.svg" alt="Tests" /></a>
   <a href="https://packagist.org/packages/jeffersongoncalves/kv-cli"><img src="https://img.shields.io/packagist/dt/jeffersongoncalves/kv-cli" alt="Total Downloads" /></a>
   <a href="https://github.com/jeffersongoncalves/kv-cli/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jeffersongoncalves/kv-cli" alt="License" /></a>
-  <img src="https://img.shields.io/badge/php-%3E%3D8.2-8892BF" alt="PHP 8.2+" />
+  <img src="https://img.shields.io/badge/php-%3E%3D8.3-8892BF" alt="PHP 8.3+" />
 </p>
 
 ## Requirements
 
-- PHP `^8.2`. No extension needed: the Redis client ([Predis](https://github.com/predis/predis)) is pure PHP and bundled in the PHAR.
+- PHP `^8.3`. No extension needed: the Redis client ([Predis](https://github.com/predis/predis)) is pure PHP and bundled in the PHAR.
 
 ## Install
 
