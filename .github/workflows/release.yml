@@ -56,7 +56,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.35.5
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2.35.5
         with:
           php-version: 8.4
           extensions: dom, curl, libxml, mbstring, zip
@@ -71,13 +71,13 @@ jobs:
         run: echo "${{ steps.v.outputs.version }}" > version.txt
 
       - name: Generate CHANGELOG.md
-        uses: orhun/git-cliff-action@3d96a18cc4ec17e9dc69ddcc424ccafaf1f78ce2 # v4.9.0
+        uses: orhun/git-cliff-action@a9a95522b26fe6403f7bb24031f21fb573d0f5ff # v4.9.1
         with:
           config: cliff.toml
           args: --tag ${{ steps.v.outputs.version }} -o CHANGELOG.md
 
       - name: Generate release notes
-        uses: orhun/git-cliff-action@3d96a18cc4ec17e9dc69ddcc424ccafaf1f78ce2 # v4.9.0
+        uses: orhun/git-cliff-action@a9a95522b26fe6403f7bb24031f21fb573d0f5ff # v4.9.1
         with:
           config: cliff.toml
           args: --tag ${{ steps.v.outputs.version }} --unreleased --strip all -o RELEASE_NOTES.md
@@ -87,7 +87,7 @@ jobs:
 
       - name: Commit release artifacts to main
         id: commit
-        uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7
+        uses: stefanzweifel/git-auto-commit-action@d0b01107b5db882071f96de5dd4b54961ea93f4c # v7
         with:
           branch: main
           commit_message: "Release ${{ steps.v.outputs.version }}"
