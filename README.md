@@ -1,3 +1,9 @@
+<div class="filament-hidden">
+
+![kv-cli](https://raw.githubusercontent.com/jeffersongoncalves/kv-cli/main/art/jeffersongoncalves-kv-cli.png)
+
+</div>
+
 # kv-cli
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-FFDD00?style=flat-square&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/jeffersongoncalves)
