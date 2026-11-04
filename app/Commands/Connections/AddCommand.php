@@ -32,7 +32,7 @@ class AddCommand extends Command
         $name = $this->argument('name') ?: text(label: 'Profile name', placeholder: 'cache', required: true);
         $host = $this->option('host') ?: text(label: 'Host', default: '127.0.0.1', required: true);
         $port = (int) ($this->option('port') ?: text(label: 'Port', default: '6379', required: true));
-        $database = (int) ($this->option('db') ?? text(label: 'Database index', default: '0', required: true));
+        $database = (int) ($this->option('db') ?? 0);
         $username = $this->option('username') ?: text(label: 'ACL username', hint: 'Leave empty for password-only auth');
         $password = $this->option('password') ?: password(label: 'Password', hint: 'Leave empty if the server has no auth');
 
