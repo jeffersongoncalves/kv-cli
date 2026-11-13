@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-11-13
+
+### Bug Fixes
+
+- Wrap docker inspect timeout in SshTunnelException
+
+### Features
+
+- Support Redis inside Docker containers over SSH
+
 ## [1.1.1] - 2026-11-04
 
 ### Bug Fixes
