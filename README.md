@@ -83,6 +83,19 @@ kv connections:add prod --host=127.0.0.1 --port=6379 --password="$REDIS_PASSWORD
     --ssh-private-key=~/.ssh/id_ed25519
 ```
 
+If Redis runs in a Docker container with no published port (Coolify, Dokploy,
+Kronn.io, ...), pass `--docker-container=<name>`. Before opening the tunnel the
+CLI runs `docker inspect` over the same SSH connection and forwards to the
+container's current IP instead of `host`, so the profile keeps working when the
+container is recreated. The SSH user must be able to run `docker` (e.g. be in
+the `docker` group).
+
+```bash
+kv connections:add prod --port=6379 --password="$REDIS_PASSWORD" \
+    --ssh-host=vps.example.com --ssh-username=deploy \
+    --docker-container=redis
+```
+
 ### List keys
 
 ```bash

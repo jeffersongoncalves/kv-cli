@@ -16,6 +16,7 @@ class Connection
         public readonly ?int $sshPort = null,
         public readonly ?string $sshUsername = null,
         public readonly ?string $sshPrivateKey = null,
+        public readonly ?string $dockerContainer = null,
     ) {}
 
     public function withDatabase(int $database): self
@@ -49,6 +50,7 @@ class Connection
             sshPort: isset($data['ssh_port']) ? (int) $data['ssh_port'] : null,
             sshUsername: isset($data['ssh_username']) ? (string) $data['ssh_username'] : null,
             sshPrivateKey: isset($data['ssh_private_key']) ? (string) $data['ssh_private_key'] : null,
+            dockerContainer: isset($data['docker_container']) ? (string) $data['docker_container'] : null,
         );
     }
 
@@ -68,6 +70,7 @@ class Connection
             'ssh_port' => $this->sshPort,
             'ssh_username' => $this->sshUsername,
             'ssh_private_key' => $this->sshPrivateKey,
+            'docker_container' => $this->dockerContainer,
         ];
     }
 
@@ -85,6 +88,7 @@ class Connection
             sshPort: $this->sshPort,
             sshUsername: $this->sshUsername,
             sshPrivateKey: $this->sshPrivateKey,
+            dockerContainer: $this->dockerContainer,
         );
     }
 }

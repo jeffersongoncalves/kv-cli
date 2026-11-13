@@ -25,6 +25,32 @@ it('builds an ssh -L command with a private key and username', function () {
     ]);
 });
 
+it('forwards to an explicit target host, e.g. a resolved container IP', function () {
+    $connection = new Connection(name: 'cache', host: 'ignored', sshHost: 'vps.example.com', dockerContainer: 'redis');
+
+    expect((new SshTunnelService)->command($connection, 54321, '172.18.0.5')[3])->toBe('54321:172.18.0.5:6379');
+});
+
+it('builds a docker inspect command over the same ssh options, quoting the container name', function () {
+    $connection = new Connection(
+        name: 'cache',
+        sshHost: 'vps.example.com',
+        sshUsername: 'deploy',
+        sshPrivateKey: '/home/me/.ssh/id_ed25519',
+        dockerContainer: "redis-'x",
+    );
+
+    expect((new SshTunnelService)->inspectCommand($connection))->toBe([
+        'ssh',
+        '-p', '22',
+        '-o', 'StrictHostKeyChecking=accept-new',
+        '-o', 'ExitOnForwardFailure=yes',
+        '-i', '/home/me/.ssh/id_ed25519',
+        'deploy@vps.example.com',
+        "docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' 'redis-'\\''x'",
+    ]);
+});
+
 it('builds an ssh command without a key or username, defaulting the ssh port to 22', function () {
     $connection = new Connection(name: 'cache', host: 'redis.internal', sshHost: 'bastion.example.com');
 

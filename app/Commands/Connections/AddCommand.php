@@ -23,7 +23,8 @@ class AddCommand extends Command
         {--ssh-host= : SSH bastion host to tunnel the connection through (leave empty to connect directly)}
         {--ssh-port= : SSH port (default 22)}
         {--ssh-username= : SSH username}
-        {--ssh-private-key= : Path to the SSH private key (leave empty to use ssh-agent/default identity)}';
+        {--ssh-private-key= : Path to the SSH private key (leave empty to use ssh-agent/default identity)}
+        {--docker-container= : Docker container running Redis on the SSH host; its IP is resolved on each connect and replaces --host}';
 
     protected $description = 'Save a named Redis connection profile';
 
@@ -45,6 +46,7 @@ class AddCommand extends Command
         $sshPort = null;
         $sshUsername = null;
         $sshPrivateKey = null;
+        $dockerContainer = null;
 
         if ($sshHost) {
             $sshPort = (int) ($this->option('ssh-port') ?: text(label: 'SSH port', default: '22', required: true));
@@ -52,6 +54,10 @@ class AddCommand extends Command
             $sshPrivateKey = $this->option('ssh-private-key') ?: text(
                 label: 'SSH private key path',
                 hint: 'Leave empty to use ssh-agent/default identity',
+            );
+            $dockerContainer = $this->option('docker-container') ?: text(
+                label: 'Docker container',
+                hint: 'Leave empty unless Redis runs in a container with no published port',
             );
         }
 
@@ -67,6 +73,7 @@ class AddCommand extends Command
             sshPort: $sshPort,
             sshUsername: $sshUsername ?: null,
             sshPrivateKey: $sshPrivateKey ?: null,
+            dockerContainer: $dockerContainer ?: null,
         ));
 
         $this->components->info("Connection \"{$name}\" saved to {$connections->path()}");
