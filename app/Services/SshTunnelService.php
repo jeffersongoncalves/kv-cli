@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTOs\Connection;
 use App\Exceptions\SshTunnelException;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 
 class SshTunnelService
@@ -85,7 +86,11 @@ class SshTunnelService
 
         $process = new Process($this->inspectCommand($connection));
         $process->setTimeout(self::CONNECT_TIMEOUT_SECONDS * 2);
-        $process->run();
+        try {
+            $process->run();
+        } catch (ProcessTimedOutException) {
+            throw SshTunnelException::containerNotResolved($connection->name, $container, 'timed out after '.(self::CONNECT_TIMEOUT_SECONDS * 2).'s waiting for ssh/docker inspect');
+        }
 
         if (! $process->isSuccessful()) {
             throw SshTunnelException::containerNotResolved($connection->name, $container, $process->getErrorOutput());
