@@ -21,7 +21,11 @@ class SshTunnelService
     {
         $localPort = $this->freeLocalPort();
 
-        $process = new Process($this->command($connection, $localPort));
+        $targetHost = $connection->dockerContainer !== null
+            ? $this->containerIp($connection)
+            : $connection->host;
+
+        $process = new Process($this->command($connection, $localPort, $targetHost));
         $process->setTimeout(null);
         $process->start();
 
@@ -38,30 +42,97 @@ class SshTunnelService
 
     /**
      * Builds the `ssh -L ...` argv for forwarding $localPort to the
-     * connection's real host:port through its SSH bastion.
+     * connection's real host:port (or $targetHost, e.g. a container IP)
+     * through its SSH bastion.
      *
      * @return list<string>
      */
-    public function command(Connection $connection, int $localPort): array
+    public function command(Connection $connection, int $localPort, ?string $targetHost = null): array
     {
-        $command = [
+        $targetHost ??= $connection->host;
+
+        return [
             'ssh', '-N',
-            '-L', "{$localPort}:{$connection->host}:{$connection->port}",
+            '-L', "{$localPort}:{$targetHost}:{$connection->port}",
+            ...$this->sshOptions($connection),
+        ];
+    }
+
+    /**
+     * Builds the `ssh ... docker inspect` argv that prints the IP(s) of the
+     * connection's Docker container, space-separated, one per network.
+     *
+     * @return list<string>
+     */
+    public function inspectCommand(Connection $connection): array
+    {
+        $format = '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}';
+
+        return [
+            'ssh',
+            ...$this->sshOptions($connection),
+            'docker inspect -f '.self::shellQuote($format).' '.self::shellQuote((string) $connection->dockerContainer),
+        ];
+    }
+
+    /**
+     * Resolves the container's current IP over SSH, so the tunnel survives
+     * container recreation (Docker hands out a new IP each time).
+     */
+    private function containerIp(Connection $connection): string
+    {
+        $container = (string) $connection->dockerContainer;
+
+        $process = new Process($this->inspectCommand($connection));
+        $process->setTimeout(self::CONNECT_TIMEOUT_SECONDS * 2);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw SshTunnelException::containerNotResolved($connection->name, $container, $process->getErrorOutput());
+        }
+
+        // ponytail: first network wins; add a docker_network option if a container on several networks picks the wrong one
+        $ip = strtok(trim($process->getOutput()), " \n");
+
+        if ($ip === false) {
+            throw SshTunnelException::containerNotResolved($connection->name, $container, 'container has no IP address (network_mode: host?)');
+        }
+
+        return $ip;
+    }
+
+    /**
+     * Shared `-p/-o/-i user@host` options for every ssh invocation.
+     *
+     * @return list<string>
+     */
+    private function sshOptions(Connection $connection): array
+    {
+        $options = [
             '-p', (string) ($connection->sshPort ?? 22),
             '-o', 'StrictHostKeyChecking=accept-new',
             '-o', 'ExitOnForwardFailure=yes',
         ];
 
         if ($connection->sshPrivateKey !== null) {
-            $command[] = '-i';
-            $command[] = $connection->sshPrivateKey;
+            $options[] = '-i';
+            $options[] = $connection->sshPrivateKey;
         }
 
-        $command[] = $connection->sshUsername !== null
+        $options[] = $connection->sshUsername !== null
             ? "{$connection->sshUsername}@{$connection->sshHost}"
             : (string) $connection->sshHost;
 
-        return $command;
+        return $options;
+    }
+
+    /**
+     * POSIX single-quoting for the remote shell (escapeshellarg() follows the
+     * local OS, which is wrong on Windows).
+     */
+    private static function shellQuote(string $value): string
+    {
+        return "'".str_replace("'", "'\\''", $value)."'";
     }
 
     // ponytail: bind-then-close to find a free port; a rival process could grab it

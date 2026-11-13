@@ -25,6 +25,7 @@ it('saves and reloads a connection profile', function () {
         tls: true,
         sshHost: 'bastion.example.com',
         sshUsername: 'deploy',
+        dockerContainer: 'redis',
     ));
 
     $reloaded = (new ConnectionService)->getOrFail('cache');
@@ -36,7 +37,8 @@ it('saves and reloads a connection profile', function () {
         ->and($reloaded->password)->toBe('secret')
         ->and($reloaded->tls)->toBeTrue()
         ->and($reloaded->sshHost)->toBe('bastion.example.com')
-        ->and($reloaded->sshUsername)->toBe('deploy');
+        ->and($reloaded->sshUsername)->toBe('deploy')
+        ->and($reloaded->dockerContainer)->toBe('redis');
 });
 
 it('removes a connection profile', function () {
